@@ -3,7 +3,6 @@ import "instantsearch.css/themes/satellite.css";
 import searchClient from "./utils.js";
 
 import {
-  searchBox,
   hits,
   configure,
   panel,
@@ -18,30 +17,30 @@ import virtualSearchBox from "./VirtualSearchBox.js";
 
 const indexName = "prod_ECOM";
 
-export const search = instantsearch({
-  indexName,
-  searchClient,
-  routing: instantSearchRouter,
-});
-
-let categoryFilters = "";
-
-(function CategoryPageCheck() {
-  if (window.location.pathname == "/search/Mens/Clothing") {
-    console.log(window.location.pathname);
-    categoryFilters = "category_page_id:'Men > Clothing'";
-    console.log(categoryFilters);
-    return;
-  }
-  if (window.location.pathname == "/search/Womens/Clothing") {
-    console.log(window.location.pathname);
-    categoryFilters = "category_page_id:'Women > Clothing'";
-    console.log(categoryFilters);
-    return;
-  } else return;
-})();
-
-function searchpage() {
+export function initSearchPage() {
+  const search = instantsearch({
+    indexName,
+    searchClient,
+    routing: instantSearchRouter,
+  });
+  
+  let categoryFilters = "";
+  
+  (function CategoryPageCheck() {
+    if (window.location.pathname == "/search/Mens/Clothing") {
+      console.log(window.location.pathname);
+      categoryFilters = "category_page_id:'Men > Clothing'";
+      console.log(categoryFilters);
+      return;
+    }
+    if (window.location.pathname == "/search/Womens/Clothing") {
+      console.log(window.location.pathname);
+      categoryFilters = "category_page_id:'Women > Clothing'";
+      console.log(categoryFilters);
+      return;
+    } else return;
+  })();
+  
   search.addWidgets([
     configure({
       hitsPerPage: 9,
@@ -148,22 +147,6 @@ function searchpage() {
       container: "#pagination",
     }),
   ]);
+
+  search.start();
 }
-
-const observer = new MutationObserver(function (mutations_list) {
-  mutations_list.forEach(function (mutation) {
-    mutation.addedNodes.forEach(function (added_node) {
-      if (added_node.id == "search-page") {
-        console.log("#searchpage has been mounted");
-        searchpage();
-
-        observer.disconnect();
-      }
-    });
-  });
-});
-
-observer.observe(document.querySelector("#main-page"), {
-  subtree: false,
-  childList: true,
-});
